@@ -1,0 +1,150 @@
+/* styles/index.css */
+
+/* 1. Basic reset & box-sizing */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* 2. Header & Navigation */
+.main-nav {
+  background-color: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.main-nav ul {
+  list-style: none;
+  display: flex;
+  align-items: center;
+}
+
+.main-nav ul li {
+  margin-right: 1.5rem;
+}
+
+.main-nav ul li:last-child {
+  margin-right: 0;
+}
+
+.main-nav a {
+  color: #333333;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0.5rem;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.main-nav a:hover {
+  background-color: #f5f5f5;
+  border-radius: 4px;
+}
+
+.user-menu li {
+  margin-right: 1rem;
+}
+
+.user-menu li:last-child {
+  margin-right: 0;
+}
+
+.user-menu .icon {
+  width: 24px;
+  height: 24px;
+  display: inline-block;
+}
+
+/* 3. Two-column layout */
+.container {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+  padding: 2rem;
+}
+
+/* 4. Hero/Search styling */
+#search-hero {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+#search-hero h1 {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+}
+#search-hero form {
+  display: inline-flex;
+  width: 100%;
+  max-width: 400px;
+}
+#search-hero input {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-right: none;
+}
+#search-hero button {
+  padding: 0 1rem;
+  border: 1px solid #ccc;
+  background: #eee;
+  cursor: pointer;
+}
+
+/* 5. Section headings */
+section h2 {
+  margin-bottom: 1rem;
+  font-size: 1.4rem;
+}
+
+/* 6. Grid of cards/placeholders */
+.grid {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 1rem;
+}
+.placeholder {
+  background: #ddd;
+  height: 120px;
+  border-radius: 4px;
+}
+.placeholder.small {
+  height: 40px;
+  width: 100%;
+}
+
+/* 7. Announcements sidebar */
+#announcements h2 {
+  margin-bottom: 1rem;
+}
+#announcements ul {
+  list-style: none;
+}
+#announcements li + li {
+  margin-top: 0.5rem;
+}
+
+/* 8. Responsive tweaks */
+@media (max-width: 768px) {
+  .main-nav {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem;
+  }
+  .main-nav ul {
+    flex-direction: column;
+    width: 100%;
+  }
+  .main-nav ul li {
+    margin: 0.5rem 0;
+  }
+
+  .container {
+    grid-template-columns: 1fr;
+  }
+  #announcements {
+    margin-top: 2rem;
+  }
+}
