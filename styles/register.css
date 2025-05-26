@@ -1,0 +1,134 @@
+/* Base Styling */
+body {
+    font-family: 'Times New Roman', Times, serif;
+    background: linear-gradient(to right, #e0f7fa, #ffffff);
+    margin: 0;
+    padding: 0;
+}
+
+/* Container */
+.container {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Portal Title */
+.portal-title {
+    font-size: 2rem;
+    font-weight: bold;
+    text-align: center;
+    color: black;
+    margin-bottom: 40px;
+    border-bottom: 2px solid black;
+    padding-bottom: 10px;
+    width: 100%;
+}
+
+/* Form Styling */
+form.form-control {
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 2rem;
+    width: 100%;
+    max-width: 340px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Form Icon and Heading */
+form .row {
+    text-align: center;
+}
+
+form .row i {
+    color: #28a745;
+    margin-bottom: 10px;
+}
+
+form h5 {
+    font-weight: 700;
+    font-size: 24px;
+    color: #333;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+/* Input fields */
+form input[type="text"],
+form input[type="email"],
+form input[type="password"] {
+    width: 100%;
+    padding: 10px 10px;
+    margin-top: 6px;
+    border-radius: 6px;
+    border: 1px solid #ced4da;
+    font-size: 15px;
+    transition: border-color 0.3s ease-in-out;
+}
+
+form input:focus {
+    border-color: #28a745;
+    outline: none;
+}
+
+/* Labels */
+form label {
+    font-weight: 600;
+    margin-top: 14px;
+    display: block;
+    color: #333;
+    font-size: 15px;
+}
+
+/* Submit Button */
+form button {
+    width: 100%;
+    padding: 12px;
+    font-weight: bold;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    margin-top: 20px;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+form button:hover {
+    background-color: #218838;
+}
+
+/* Login Prompt */
+form p {
+    font-weight: 600;
+    color: black;
+    margin-top: 25px;
+    text-align: center;
+}
+
+form p a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+form p a:hover {
+    text-decoration: underline;
+}
+
+/* Toast Styling */
+.toast {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    min-width: 300px;
+    z-index: 1055;
+    border-radius: 6px;
+    font-size: 14px;
+    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.2);
+}
+
+
+
