@@ -7,6 +7,34 @@ header {
   border-bottom: 1px solid #e9ecef;
 }
 
+.icon {
+  width: 24px;
+  height: 24px;
+}
+
+/* override for icon link */
+.main-nav a.icon-link {
+  padding: 0.5rem;           /* uniform padding */
+  border-radius: 50%;        /* perfect circle */
+  display: inline-flex;      /* center the img */
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s ease; /* drop the translateY if you like */
+}
+
+/* hover just changes the background circle */
+.main-nav a.icon-link:hover {
+  background: rgba(102,126,234,0.1);
+  transform: none;           /* remove the lift */
+}
+
+/* keep your img size */
+.icon {
+  width: 24px;
+  height: 24px;
+}
+
+
 /* Main navigation container */
 .main-nav {
   max-width: 1200px;
