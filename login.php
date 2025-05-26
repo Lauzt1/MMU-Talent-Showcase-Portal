@@ -8,7 +8,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
     $password = $_POST['password'];
 
-    $stmt = $pdo->prepare("SELECT password FROM userdata WHERE email = ?");
+    $stmt = $pdo->prepare("SELECT id, password FROM userdata WHERE email = ?");
     $stmt->execute([$email]);
     
     if ($stmt->rowCount() > 0) {
@@ -20,6 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $toastClass = "bg-success";
             session_start();
             $_SESSION['email'] = $email;
+            $_SESSION['user_id'] = $row['id'];
             header("Location: index.php");
             exit();
         } else {
