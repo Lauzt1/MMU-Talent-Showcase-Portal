@@ -25,8 +25,12 @@ if (session_status() === PHP_SESSION_NONE) {
     </ul>
     <ul class="user-menu">
       <?php if (isset($_SESSION['user_id'])): ?>
-        <li><a href="profile.php"><img src="assets/user-icon.png" alt="Profile" class="icon"></a></li>
-        <li><a href="logout.php">Logout</a></li>
+        <li>
+          <a href="userprofile.php" class="icon-link">
+            <img src="assets/icon.jpg" alt="Profile" class="icon">
+          </a>
+        </li>
+        <!-- <li><a href="logout.php">Logout</a></li> -->
       <?php else: ?>
         <li><a href="login.php">Login</a></li>
         <li><a href="register.php">Register</a></li>
