@@ -34,14 +34,31 @@
   </div>
 
   <!-- Sidebar -->
-  <aside id="announcements">
+<aside id="announcements">
     <h2>Announcements</h2>
     <ul>
-      <?php for($i=0;$i<3;$i++): ?>
-        <li><div class="placeholder small"></div></li>
-      <?php endfor; ?>
+        <?php 
+        include('config.php');
+        try {
+            $stmt = $pdo->query("SELECT * FROM announcements ORDER BY created_date DESC LIMIT 5");
+            $announcements = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            foreach ($announcements as $announcement): 
+        ?>
+            <li>
+                <h4><?php echo htmlspecialchars($announcement['title']); ?></h4>
+                <p><?php echo htmlspecialchars(substr($announcement['content'], 0, 100)); ?>
+                <?php if (strlen($announcement['content']) > 100) echo '...'; ?></p>
+                <small><?php echo date('M j, Y', strtotime($announcement['created_date'])); ?></small>
+            </li>
+        <?php 
+            endforeach;
+        } catch(PDOException $e) {
+            echo '<li>Error loading announcements</li>';
+        }
+        ?>
     </ul>
-  </aside>
+</aside>
 </main>
 
 <?php include 'footer.php'; ?>
