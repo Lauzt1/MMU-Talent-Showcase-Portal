@@ -17,7 +17,7 @@ A web portal for showcasing student talents at Multimedia University.
 
 4. **Access**
    - Homepage: `http://localhost/mmu-talent-showcase/index.php`
-   - Admin Panel: `http://localhost/mmu-talent-showcase/announcement.php`
+   - Admin Panel: `http://localhost/mmu-talent-showcase/admin/index.php`
 
 ## Features
 - Announcement management system

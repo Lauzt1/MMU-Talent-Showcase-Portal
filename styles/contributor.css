@@ -1,0 +1,20 @@
+.contributors-container {
+  padding: 2rem;
+  text-align: center;
+}
+.contributors-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 2rem;
+  margin-top: 1.5rem;
+}
+.contributor-card img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  object-fit: cover;
+}
+.contributor-card p {
+  margin-top: 0.5rem;
+  font-weight: 500;
+}

@@ -1,4 +1,4 @@
-<?php include 'faq-header.php'; ?>
+<?php include 'header.php'; ?>
 <link rel="stylesheet" href="styles/faq.css">
 
 <main class="container">

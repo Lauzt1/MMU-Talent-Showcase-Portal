@@ -38,7 +38,7 @@
     <h2>Announcements</h2>
     <ul>
         <?php 
-        include('config.php');
+        include('admin/config.php');
         try {
             $stmt = $pdo->query("SELECT * FROM announcements ORDER BY created_date DESC LIMIT 5");
             $announcements = $stmt->fetchAll(PDO::FETCH_ASSOC);

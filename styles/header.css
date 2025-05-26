@@ -1,0 +1,63 @@
+/* styles/header.css */
+
+/* Header wrapper */
+header {
+  background: #fff;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  border-bottom: 1px solid #e9ecef;
+}
+
+/* Main navigation container */
+.main-nav {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4rem;         /* space between left and right groups */
+  padding: 1rem 0;
+}
+
+/* Navigation lists */
+.main-nav ul {
+  list-style: none;
+  display: flex;
+  gap: 2rem;         /* space between individual links */
+  margin: 0;
+  padding: 0;
+}
+
+/* Remove any default list markers */
+.main-nav li {
+  list-style: none;
+}
+
+/* Link styling */
+.main-nav a {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 25px;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.main-nav a:hover {
+  background: rgba(102,126,234,0.1);
+  transform: translateY(-2px);
+}
+
+/* Active link state */
+.main-nav a.active {
+  background: #667eea;
+  color: #fff;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .main-nav {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
