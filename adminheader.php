@@ -18,7 +18,7 @@ if (session_status() === PHP_SESSION_NONE) {
 <header>
   <nav class="main-nav">
     <ul>
-      <li><a href="index.php">Home</a></li>
+      <li><a href="adminindex.php">Home</a></li>
       <li><a href="contributor.php">Contributor</a></li>
     </ul>
     <ul class="user-menu">
