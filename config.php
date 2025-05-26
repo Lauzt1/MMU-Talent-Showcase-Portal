@@ -1,11 +1,9 @@
 <?php
-// Database configuration template
-// Copy this file to config.php and update with your database details
-
+// Database configuration
 $host = 'localhost';
-$dbname = 'your_database_name';
-$username = 'your_username';
-$password = 'your_password';
+$dbname = 'mmu_talent_showcase';
+$username = 'root';
+$password = ''; // Default XAMPP MySQL password is empty
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
