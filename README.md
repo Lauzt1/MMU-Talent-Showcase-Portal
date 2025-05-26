@@ -13,7 +13,6 @@ A web portal for showcasing student talents at Multimedia University.
    - Import `database.sql` or run the SQL commands in setup guide
 
 3. **Configuration**
-   - Copy `config-sample.php` to `config.php`
    - Update database credentials in `config.php`
 
 4. **Access**
