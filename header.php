@@ -20,7 +20,7 @@ if (session_status() === PHP_SESSION_NONE) {
     <ul>
       <li><a href="index.php">Home</a></li>
       <li><a href="catalogue.php">Talent Catalogue</a></li>
-      <li><a href="resources.php">Resource Sharing</a></li>
+      <li><a href="resourcesharing.php">Resource Sharing</a></li>
       <li><a href="faq.php">FAQ</a></li>
     </ul>
     <ul class="user-menu">
