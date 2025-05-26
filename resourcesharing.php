@@ -1,7 +1,7 @@
 <?php
 // resource_sharing.php
 include 'header.php';
-require_once 'config.php';
+require_once 'admin/config.php';
 
 // session_start() already in header.php
 
