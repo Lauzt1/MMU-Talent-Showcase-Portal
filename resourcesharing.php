@@ -1,13 +1,22 @@
 <?php
 // resource_sharing.php
+session_start(); // Explicitly start session here
 include 'header.php';
 require_once 'admin/config.php';
-
-// session_start() already in header.php
 
 // Only allow logged-in users
 if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
+    exit;
+}
+
+// VALIDATE USER EXISTS IN DATABASE
+$userCheckStmt = $pdo->prepare("SELECT id FROM userdata WHERE id = ?");
+$userCheckStmt->execute([$_SESSION['user_id']]);
+if (!$userCheckStmt->fetch()) {
+    // User ID in session doesn't exist in database
+    session_destroy();
+    header('Location: login.php?error=invalid_session');
     exit;
 }
 
@@ -44,20 +53,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if (move_uploaded_file($tmp, $destFull)) {
                 $desc = trim($_POST['description'] ?? null);
-                $stmt = $pdo->prepare("
-                    INSERT INTO resources
-                      (user_id, file_name, file_path, mime_type, title, description)
-                    VALUES (?, ?, ?, ?, ?, ?)
-                ");
-                $stmt->execute([
-                    $_SESSION['user_id'],
-                    $_FILES['resource']['name'],
-                    $filePath,
-                    $mime,
-                    $title,
-                    $desc
-                ]);
-                $msg = '<div class="success-msg">Upload successful & sent for review.</div>';
+                
+                try {
+                    $stmt = $pdo->prepare("
+                        INSERT INTO resources
+                          (user_id, file_name, file_path, mime_type, title, description)
+                        VALUES (?, ?, ?, ?, ?, ?)
+                    ");
+                    $stmt->execute([
+                        $_SESSION['user_id'],
+                        $_FILES['resource']['name'],
+                        $filePath,
+                        $mime,
+                        $title,
+                        $desc
+                    ]);
+                    $msg = '<div class="success-msg">Upload successful & sent for review.</div>';
+                } catch (PDOException $e) {
+                    // Log the error and show user-friendly message
+                    error_log("Resource upload error: " . $e->getMessage());
+                    $msg = '<div class="error-msg">Database error. Please try again or contact support.</div>';
+                    // Clean up uploaded file since DB insert failed
+                    if (file_exists($destFull)) {
+                        unlink($destFull);
+                    }
+                }
             } else {
                 $msg = '<div class="error-msg">Could not move uploaded file.</div>';
             }
@@ -67,7 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Fetch this user’s uploads
+// Fetch this user's uploads
 $stmt = $pdo->prepare("
     SELECT * FROM resources
      WHERE user_id = ?
