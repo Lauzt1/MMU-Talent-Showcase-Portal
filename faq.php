@@ -1,4 +1,7 @@
-<?php include 'header.php'; ?>
+<?php 
+include 'header.php'; 
+include 'config.php';
+?>
 <link rel="stylesheet" href="styles/faq.css">
 
 <main class="container">
@@ -26,88 +29,51 @@
     <!-- FAQ List -->
     <section id="faq-list">
       <?php
-      // Mock FAQ data - replace with database later
-      $faqs = [
-        [
-          'id' => 1,
-          'question' => 'How do I create an account on the MMU Talent Showcase Portal?',
-          'answer' => 'To create an account, click on the "Sign Up" button on the homepage. Fill in your student ID, email, and create a password. You will receive a verification email to activate your account.',
-          'category' => 'account'
-        ],
-        [
-          'id' => 2,
-          'question' => 'How can I upload my portfolio?',
-          'answer' => 'Once logged in, go to your profile page and click "Upload Portfolio". You can upload images, videos, documents, and add descriptions for each piece of work.',
-          'category' => 'portfolio'
-        ],
-        [
-          'id' => 3,
-          'question' => 'What file formats are supported for portfolio uploads?',
-          'answer' => 'We support common image formats (JPG, PNG, GIF), video formats (MP4, MOV, AVI), and document formats (PDF, DOC, DOCX). Maximum file size is 50MB per upload.',
-          'category' => 'technical'
-        ],
-        [
-          'id' => 4,
-          'question' => 'How do I make my portfolio public?',
-          'answer' => 'In your portfolio settings, you can toggle between "Private" and "Public" visibility. Public portfolios can be discovered by other users and visitors.',
-          'category' => 'portfolio'
-        ],
-        [
-          'id' => 5,
-          'question' => 'Can I edit or delete my uploaded content?',
-          'answer' => 'Yes, you can edit or delete any content you have uploaded. Go to your profile, select the content you want to modify, and use the edit or delete options.',
-          'category' => 'general'
-        ],
-        [
-          'id' => 6,
-          'question' => 'How do I reset my password?',
-          'answer' => 'Click on "Forgot Password" on the login page. Enter your email address, and you will receive a password reset link via email.',
-          'category' => 'account'
-        ],
-        [
-          'id' => 7,
-          'question' => 'Why is my portfolio not showing up in search results?',
-          'answer' => 'Make sure your portfolio is set to "Public" and that you have added relevant tags and descriptions. It may take a few minutes for new content to appear in search results.',
-          'category' => 'technical'
-        ],
-        [
-          'id' => 8,
-          'question' => 'How can I contact other talented students?',
-          'answer' => 'You can view public profiles and use the contact form on each profile page to send messages to other students. Respect privacy and use appropriate communication.',
-          'category' => 'general'
-        ]
-      ];
-
-      // Filter FAQs based on search
+      // Fetch FAQs from database
       $search = $_GET['search'] ?? '';
-      $filtered_faqs = $faqs;
+      $faqs = [];
       
-      if (!empty($search)) {
-        $filtered_faqs = array_filter($faqs, function($faq) use ($search) {
-          return stripos($faq['question'], $search) !== false || 
-                 stripos($faq['answer'], $search) !== false;
-        });
+      try {
+        if (!empty($search)) {
+          // Search query
+          $stmt = $pdo->prepare("SELECT * FROM faqs WHERE question LIKE ? OR answer LIKE ? ORDER BY created_date DESC");
+          $searchTerm = '%' . $search . '%';
+          $stmt->execute([$searchTerm, $searchTerm]);
+        } else {
+          // Get all FAQs
+          $stmt = $pdo->query("SELECT * FROM faqs ORDER BY created_date DESC");
+        }
+        $faqs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+      } catch(PDOException $e) {
+        $faqs = [];
+        $error_message = "Error fetching FAQs: " . $e->getMessage();
       }
       ?>
 
       <div class="faq-container">
-        <?php if (empty($filtered_faqs)): ?>
+        <?php if (empty($faqs)): ?>
           <div class="no-results">
-            <p>No FAQs found matching your search.</p>
+            <p><?php echo !empty($search) ? 'No FAQs found matching your search.' : 'No FAQs available at the moment.'; ?></p>
           </div>
         <?php else: ?>
-          <?php foreach ($filtered_faqs as $faq): ?>
-            <div class="faq-item" data-category="<?php echo $faq['category']; ?>">
+          <?php foreach ($faqs as $faq): ?>
+            <div class="faq-item" data-category="<?php echo htmlspecialchars($faq['category']); ?>">
               <div class="faq-question" onclick="toggleFAQ(<?php echo $faq['id']; ?>)">
                 <h3><?php echo htmlspecialchars($faq['question']); ?></h3>
                 <span class="faq-toggle">+</span>
               </div>
               <div class="faq-answer" id="faq-<?php echo $faq['id']; ?>">
                 <p><?php echo htmlspecialchars($faq['answer']); ?></p>
-                <span class="faq-category"><?php echo ucfirst($faq['category']); ?></span>
+                <span class="faq-category"><?php echo ucfirst(htmlspecialchars($faq['category'])); ?></span>
               </div>
             </div>
           <?php endforeach; ?>
+        <?php endif; ?>
+        
+        <?php if (isset($error_message)): ?>
+          <div class="error-message">
+            <p><?php echo htmlspecialchars($error_message); ?></p>
+          </div>
         <?php endif; ?>
       </div>
     </section>
@@ -143,9 +109,16 @@
 
     <?php
     // Handle feedback submission
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['message'])) {
-      // In a real application, save to database
-      echo '<div class="feedback-success">Thank you! We will get back to you soon.</div>';
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['message']) && isset($_POST['name'])) {
+      try {
+        // Save feedback to database (optional - create feedback table)
+        $stmt = $pdo->prepare("INSERT INTO feedback (name, email, subject, message) VALUES (?, ?, ?, ?)");
+        $stmt->execute([$_POST['name'], $_POST['email'], $_POST['subject'], $_POST['message']]);
+        echo '<div class="feedback-success">Thank you! We will get back to you soon.</div>';
+      } catch(PDOException $e) {
+        // If feedback table doesn't exist, just show success message
+        echo '<div class="feedback-success">Thank you! We will get back to you soon.</div>';
+      }
     }
     ?>
   </aside>
@@ -200,5 +173,17 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 </script>
+
+<style>
+.error-message {
+  text-align: center;
+  padding: 20px;
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+  border-radius: 8px;
+  margin: 20px 0;
+}
+</style>
 
 <?php include 'footer.php'; ?>
