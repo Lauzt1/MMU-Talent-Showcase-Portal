@@ -13,7 +13,7 @@
     <a href="talents.php" class="admin-card">Talent Portfolios</a>
     <a href="manageusers.php" class="admin-card">Manage Users</a>
     <a href="announcement.php" class="admin-card">Announcement Management</a>
-    <a href="faq.php" class="admin-card">FAQ Management</a>
+    <a href="faq-admin.php" class="admin-card">FAQ Management</a>
 </div>
 
 <?php include 'footer.php'; ?>
