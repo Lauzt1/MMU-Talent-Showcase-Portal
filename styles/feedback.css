@@ -1,0 +1,85 @@
+/* styles/feedback.css */
+
+/* 1. Center the feedback section */
+main.container {
+  display: flex;
+  justify-content: center;
+  padding: 50px 20px;
+}
+
+/* 2. Feedback block */
+#feedback {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* 3. Section title */
+#feedback h2 {
+  font-size: 2rem;
+  color: #333;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+}
+
+/* 4. List styling */
+#feedback ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* 5. Individual feedback items */
+#feedback li {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease;
+}
+#feedback li:hover {
+  transform: translateY(-3px);
+}
+
+/* 6. Feedback subject */
+#feedback li h4 {
+  font-size: 1.25rem;
+  color: #667eea;
+  margin-bottom: 0.75rem;
+  text-transform: capitalize;
+}
+
+/* 7. Message snippet */
+#feedback li p {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 0.75rem;
+  line-height: 1.5;
+}
+
+/* 8. User & date metadata */
+#feedback li small {
+  display: block;
+  font-size: 0.85rem;
+  color: #888;
+}
+
+/* 9. Responsive adjustments */
+@media (max-width: 600px) {
+  main.container {
+    padding: 30px 10px;
+  }
+  #feedback {
+    max-width: 100%;
+  }
+  #feedback h2 {
+    font-size: 1.75rem;
+  }
+  #feedback li {
+    padding: 15px;
+  }
+}
