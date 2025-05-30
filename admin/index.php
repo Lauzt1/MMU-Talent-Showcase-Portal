@@ -11,7 +11,7 @@
 <div class="admin-container">
     <a href="feedback.php" class="admin-card">Check Users' Feedback</a>
     <a href="talents.php" class="admin-card">Talent Portfolios Approval</a>
-    <a href="manageusers.php" class="admin-card">Manage Users' Profile</a>
+    <a href="manageusers.php" class="admin-card">Users' Profile Management</a>
     <a href="announcement.php" class="admin-card">Announcement Management</a>
     <a href="faq-admin.php" class="admin-card">FAQ Management</a>
 </div>
