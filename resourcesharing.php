@@ -1,5 +1,5 @@
 <?php
-// resource_sharing.php
+// resourcesharing.php
 session_start(); // Explicitly start session here
 include 'header.php';
 require_once 'admin/config.php';
@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (in_array($mime, $allowed) && $size <= 50 * 1024 * 1024) {
             // Ensure the directory exists
-            $uploadDir = __DIR__ . '/uploads/resources';
+            $uploadDir = __DIR__ . '/assets/uploads';
             if (!is_dir($uploadDir)) {
                 mkdir($uploadDir, 0755, true);
             }
@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $ext      = pathinfo($_FILES['resource']['name'], PATHINFO_EXTENSION);
             $safeName = uniqid('res_', true) . ".$ext";
             $destFull = $uploadDir . '/' . $safeName;
-            $filePath = 'uploads/resources/' . $safeName;  // relative URL
+            $filePath = 'assets/uploads/' . $safeName;  // relative URL
 
             if (move_uploaded_file($tmp, $destFull)) {
                 $desc = trim($_POST['description'] ?? null);

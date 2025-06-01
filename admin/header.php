@@ -25,7 +25,7 @@ if (session_status() === PHP_SESSION_NONE) {
       <?php if (isset($_SESSION['user_id'])): ?>
         <li>
           <a href="userprofile.php" class="icon-link">
-            <img src="../assets/icon.jpg" alt="Profile" class="icon">
+            <img src="../assets/contributor/icon.jpg" alt="Profile" class="icon">
           </a>
         </li>
         <!-- <li><a href="logout.php">Logout</a></li> -->

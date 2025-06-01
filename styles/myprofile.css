@@ -1,0 +1,233 @@
+/* styles/myprofile.css */
+
+/* ===== Container & Two-Column Layout ===== */
+.profile-container {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+.profile-form {
+  display: flex;
+  background: #f8f9fa;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+/* ===== Left Column ===== */
+.profile-left {
+  flex: 0 0 300px;
+  background: #fff;
+  padding: 30px;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.picture-wrapper {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.picture-wrapper img#profile-img {
+  width: 180px;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid #667eea;
+  transition: opacity 0.3s ease;
+}
+
+.picture-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+
+.picture-wrapper:hover .picture-overlay {
+  opacity: 1;
+}
+
+.overlay-icon {
+  width: 48px;
+  height: 48px;
+  filter: invert(100%);
+}
+
+.display-info h2 {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.display-info p {
+  font-size: 0.95rem;
+  color: #666;
+  line-height: 1.4;
+}
+
+/* ===== Right Column ===== */
+.profile-right {
+  flex: 1;
+  padding: 30px;
+  box-sizing: border-box;
+}
+
+.profile-right .field-group {
+  margin-bottom: 20px;
+}
+
+.profile-right label {
+  display: block;
+  font-weight: 500;
+  color: #444;
+  margin-bottom: 6px;
+}
+
+.field-input {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.field-input input[type="text"],
+.field-input input[type="email"],
+.field-input textarea {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  background: #fff;
+  resize: vertical;
+}
+
+.field-input input:disabled,
+.field-input textarea:disabled {
+  background: #eceeef;
+  cursor: not-allowed;
+}
+
+.field-input input:focus,
+.field-input textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.edit-btn {
+  width: 24px;
+  height: 24px;
+  margin-left: 10px;
+  opacity: 0.7;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.edit-btn:hover {
+  opacity: 1;
+}
+
+/* ===== Action Buttons ===== */
+.action-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 30px;
+}
+
+.save-btn,
+.cancel-btn {
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.save-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+}
+
+.save-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.cancel-btn {
+  background: #ff6b6b;
+  color: #fff;
+}
+
+.cancel-btn:hover {
+  background: #ee5253;
+}
+
+/* ===== Messages ===== */
+.success-msg {
+  background: #d4edda;
+  color: #155724;
+  padding: 12px;
+  border-radius: 8px;
+  margin-top: 20px;
+  border: 1px solid #c3e6cb;
+  font-size: 0.9rem;
+}
+
+.error-msg {
+  background: #f8d7da;
+  color: #721c24;
+  padding: 12px;
+  border-radius: 8px;
+  margin-top: 20px;
+  border: 1px solid #f5c6cb;
+  font-size: 0.9rem;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 800px) {
+  .profile-form {
+    flex-direction: column;
+  }
+  .profile-left,
+  .profile-right {
+    padding: 20px;
+  }
+  .picture-wrapper img#profile-img,
+  .picture-overlay {
+    width: 140px;
+    height: 140px;
+  }
+}
+
+@media (max-width: 480px) {
+  .picture-wrapper img#profile-img,
+  .picture-overlay {
+    width: 120px;
+    height: 120px;
+  }
+  .field-input input[type="text"],
+  .field-input input[type="email"],
+  .field-input textarea {
+    padding: 10px;
+  }
+  .save-btn,
+  .cancel-btn {
+    width: 100%;
+    text-align: center;
+  }
+}

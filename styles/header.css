@@ -7,34 +7,6 @@ header {
   border-bottom: 1px solid #e9ecef;
 }
 
-.icon {
-  width: 24px;
-  height: 24px;
-}
-
-/* override for icon link */
-.main-nav a.icon-link {
-  padding: 0.5rem;           /* uniform padding */
-  border-radius: 50%;        /* perfect circle */
-  display: inline-flex;      /* center the img */
-  align-items: center;
-  justify-content: center;
-  transition: background 0.3s ease; /* drop the translateY if you like */
-}
-
-/* hover just changes the background circle */
-.main-nav a.icon-link:hover {
-  background: rgba(102,126,234,0.1);
-  transform: none;           /* remove the lift */
-}
-
-/* keep your img size */
-.icon {
-  width: 24px;
-  height: 24px;
-}
-
-
 /* Main navigation container */
 .main-nav {
   max-width: 1200px;
@@ -42,7 +14,7 @@ header {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 4rem;         /* space between left and right groups */
+  gap: 4rem; /* space between left and right groups */
   padding: 1rem 0;
 }
 
@@ -50,12 +22,11 @@ header {
 .main-nav ul {
   list-style: none;
   display: flex;
-  gap: 2rem;         /* space between individual links */
+  gap: 2rem; /* space between individual links */
   margin: 0;
   padding: 0;
 }
 
-/* Remove any default list markers */
 .main-nav li {
   list-style: none;
 }
@@ -76,16 +47,33 @@ header {
   transform: translateY(-2px);
 }
 
-/* Active link state */
 .main-nav a.active {
   background: #667eea;
   color: #fff;
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .main-nav {
-    flex-direction: column;
-    gap: 1rem;
-  }
+/* User icon link container */
+.main-nav a.icon-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: transparent;
+  transition: background 0.3s ease;
+  padding: 0; /* remove any padding so image fills edge-to-edge */
+}
+
+.main-nav a.icon-link:hover {
+  background: rgba(102,126,234,0.1);
+}
+
+/* Profile icon */
+.icon {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
 }
