@@ -77,3 +77,23 @@ header {
   object-fit: cover;
   border-radius: 50%;
 }
+
+/* ─── Push the “Logout” item to the far right ──────────────────────────────── */
+.main-nav li.logout {
+  margin-left: auto;
+}
+
+/* You may also want to match the existing link styles */
+.main-nav li.logout a {
+  color: #667eea;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 25px;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.main-nav li.logout a:hover {
+  background: rgba(102, 126, 234, 0.1);
+  transform: translateY(-2px);
+}

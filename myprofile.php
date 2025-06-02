@@ -22,13 +22,38 @@ if (!$user) {
 
 $msg = '';
 
-// Handle form submission
+// Define the five possible categories
+$allCats = [
+    'Art & Design',
+    'Music & Audio',
+    'Video & Film',
+    'Writing & Documents',
+    'others'
+];
+
+// Precompute which categories are currently “checked”
+$currentCats = [];
+if (!empty($user['talent_category'])) {
+    // MySQL SET values come back comma-separated
+    $currentCats = explode(',', $user['talent_category']);
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Collect posted values
-    $username        = trim($_POST['username'] ?? $user['username']);
-    $email           = trim($_POST['email'] ?? $user['email']);
-    $bio             = trim($_POST['bio'] ?? '');
-    $talent_category = trim($_POST['talent_category'] ?? '');
+    $username = trim($_POST['username'] ?? $user['username']);
+    $email    = trim($_POST['email'] ?? $user['email']);
+    $bio      = trim($_POST['bio'] ?? '');
+
+    // Handle the new talent_category array of checkboxes:
+    $selectedCats = $_POST['talent_category'] ?? [];
+    // Ensure $selectedCats is an array and only contains valid values
+    if (!is_array($selectedCats)) {
+        $selectedCats = [];
+    }
+    $validatedCats = array_intersect($selectedCats, $allCats);
+    $talent_category = $validatedCats
+        ? implode(',', $validatedCats)
+        : null;  // if no boxes checked, store NULL
 
     // Validation
     if (strlen($username) < 5) {
@@ -36,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $msg = '<div class="error-msg">Please enter a valid email address.</div>';
     } else {
-        // Handle profile picture upload & automatic square crop
+        // Handle profile picture upload (unchanged)
         $newPicPath = $user['profile_pic'];
         if (isset($_FILES['profile_pic']) && $_FILES['profile_pic']['error'] === UPLOAD_ERR_OK) {
             $tmpFile = $_FILES['profile_pic']['tmp_name'];
@@ -59,18 +84,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $relative = 'assets/profile/' . $safeName;
 
                 if (move_uploaded_file($tmpFile, $destFull)) {
-                    // Crop to square using GD if available
+                    // Crop to square (unchanged)
                     if (function_exists('imagecreatefromstring') && function_exists('imagecopyresampled')) {
                         $imgData = file_get_contents($destFull);
                         $srcImg = imagecreatefromstring($imgData);
                         if ($srcImg) {
-                            $width = imagesx($srcImg);
+                            $width  = imagesx($srcImg);
                             $height = imagesy($srcImg);
                             $minDim = min($width, $height);
-                            $srcX = intval(($width - $minDim) / 2);
-                            $srcY = intval(($height - $minDim) / 2);
+                            $srcX   = intval(($width  - $minDim) / 2);
+                            $srcY   = intval(($height - $minDim) / 2);
                             $dstImg = imagecreatetruecolor($minDim, $minDim);
-                            // Preserve transparency
                             if ($ext === 'png' || $ext === 'gif') {
                                 imagecolortransparent($dstImg, imagecolorallocatealpha($dstImg, 0, 0, 0, 127));
                                 imagealphablending($dstImg, false);
@@ -84,7 +108,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 $minDim, $minDim,
                                 $minDim, $minDim
                             );
-                            // Overwrite file with cropped version
                             switch ($ext) {
                                 case 'jpg':
                                 case 'jpeg':
@@ -101,7 +124,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             imagedestroy($dstImg);
                         }
                     }
-                    // Delete old pic if exists
                     if ($user['profile_pic'] && file_exists(__DIR__ . '/' . $user['profile_pic'])) {
                         unlink(__DIR__ . '/' . $user['profile_pic']);
                     }
@@ -112,19 +134,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
-        // Update if no errors
+        // If no errors so far, update the row
         if ($msg === '') {
             try {
                 $upd = $pdo->prepare("
                     UPDATE userdata
-                      SET username = ?, email = ?, bio = ?, talent_category = ?, profile_pic = ?
+                      SET username        = ?,
+                          email           = ?,
+                          bio             = ?,
+                          talent_category = ?,
+                          profile_pic     = ?
                      WHERE id = ?
                 ");
                 $upd->execute([
                     $username,
                     $email,
                     $bio ?: null,
-                    $talent_category ?: null,
+                    $talent_category,
                     $newPicPath,
                     $_SESSION['user_id']
                 ]);
@@ -132,6 +158,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Refresh user data
                 $stmt->execute([$_SESSION['user_id']]);
                 $user = $stmt->fetch(PDO::FETCH_ASSOC);
+                // Recompute currentCats in case they changed
+                $currentCats = [];
+                if (!empty($user['talent_category'])) {
+                    $currentCats = explode(',', $user['talent_category']);
+                }
             } catch (PDOException $e) {
                 error_log("Profile update error: " . $e->getMessage());
                 $msg = '<div class="error-msg">Database error. Please try again.</div>';
@@ -140,7 +171,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Determine which picture to show
+// Determine which picture to show (unchanged)
 if (!empty($user['profile_pic']) && file_exists(__DIR__ . '/' . $user['profile_pic'])) {
     $currentPic = $user['profile_pic'];
 } else {
@@ -151,13 +182,12 @@ if (!empty($user['profile_pic']) && file_exists(__DIR__ . '/' . $user['profile_p
 $currentUsername = htmlspecialchars($user['username']);
 $currentEmail    = htmlspecialchars($user['email']);
 $currentBio      = htmlspecialchars($user['bio'] ?? '');
-$currentCat      = htmlspecialchars($user['talent_category'] ?? '');
 ?>
 <link rel="stylesheet" href="styles/myprofile.css">
 
 <main class="profile-container">
   <form action="" method="post" enctype="multipart/form-data" class="profile-form" id="profile-form">
-    <!-- Left Column: Picture + Display Name & Bio -->
+    <!-- Left Column: Picture + Display Name & Bio (unchanged) -->
     <div class="profile-left">
       <div class="picture-wrapper">
         <img src="<?= htmlspecialchars($currentPic) ?>" alt="Profile of <?= $currentUsername ?>" id="profile-img">
@@ -172,9 +202,9 @@ $currentCat      = htmlspecialchars($user['talent_category'] ?? '');
       </div>
     </div>
 
-    <!-- Right Column: Editable Fields -->
+    <!-- Right Column: Editable Fields (modified talent_category section) -->
     <div class="profile-right">
-      <!-- Username Field -->
+      <!-- Username Field (unchanged) -->
       <div class="field-group">
         <label for="username">Username</label>
         <div class="field-input">
@@ -184,7 +214,7 @@ $currentCat      = htmlspecialchars($user['talent_category'] ?? '');
         </div>
       </div>
 
-      <!-- Email Field -->
+      <!-- Email Field (unchanged) -->
       <div class="field-group">
         <label for="email">Email</label>
         <div class="field-input">
@@ -194,7 +224,7 @@ $currentCat      = htmlspecialchars($user['talent_category'] ?? '');
         </div>
       </div>
 
-      <!-- Bio Field -->
+      <!-- Bio Field (unchanged) -->
       <div class="field-group">
         <label for="bio">Bio</label>
         <div class="field-input">
@@ -203,17 +233,24 @@ $currentCat      = htmlspecialchars($user['talent_category'] ?? '');
         </div>
       </div>
 
-      <!-- Talent Category Field -->
+      <!-- NEW: Talent Category Field as Checkboxes -->
       <div class="field-group">
-        <label for="talent_category">Talent Category</label>
-        <div class="field-input">
-          <input type="text" id="talent_category" name="talent_category"
-                 value="<?= $currentCat ?>" disabled>
-          <img src="assets/misc/edit.png" alt="Edit" class="edit-btn" data-target="talent_category">
+        <label for="talent_category[]">Talent Category <small>(Select one or more)</small></label>
+        <div class="field-input checkbox-group">
+          <?php foreach ($allCats as $cat): ?>
+            <label class="checkbox-label">
+              <input
+                type="checkbox"
+                name="talent_category[]"
+                value="<?= htmlspecialchars($cat) ?>"
+                <?= in_array($cat, $currentCats, true) ? 'checked' : '' ?>>
+              <?= htmlspecialchars($cat) ?>
+            </label>
+          <?php endforeach; ?>
         </div>
       </div>
 
-      <!-- Action Buttons -->
+      <!-- Action Buttons (unchanged) -->
       <div class="action-buttons">
         <button type="button" class="cancel-btn" id="cancel-btn">Cancel</button>
         <button type="submit" class="save-btn">Save Changes</button>
@@ -225,7 +262,7 @@ $currentCat      = htmlspecialchars($user['talent_category'] ?? '');
 </main>
 
 <script>
-  // Enable individual fields on edit-icon click, and update display name/bio live
+  // (unchanged JavaScript for enabling fields, previewing image, cancel button)
   document.querySelectorAll('.edit-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const targetId = btn.getAttribute('data-target');
@@ -241,12 +278,10 @@ $currentCat      = htmlspecialchars($user['talent_category'] ?? '');
     });
   });
 
-  // Profile picture overlay click
   document.getElementById('picture-overlay').addEventListener('click', () => {
     document.getElementById('profile_pic').click();
   });
 
-  // Preview new profile picture on selection
   document.getElementById('profile_pic').addEventListener('change', function() {
     if (this.files && this.files[0]) {
       const reader = new FileReader();
@@ -257,7 +292,6 @@ $currentCat      = htmlspecialchars($user['talent_category'] ?? '');
     }
   });
 
-  // Cancel button reloads page, discarding unsaved edits
   document.getElementById('cancel-btn').addEventListener('click', () => {
     window.location.reload();
   });

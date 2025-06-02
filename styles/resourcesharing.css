@@ -173,3 +173,50 @@
         padding: 20px;
     }
 }
+
+.note {
+    display: block;
+    margin-top: 5px;
+    font-size: 0.85rem;
+    color: #555;
+    text-align: center;
+}
+
+/* ─── Ensure any <img> or <video> scales down to fit the .card ───────────────── */
+.card-media {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto; /* center within card */
+}
+
+/* ─── Specifically constrain the icon-size for audio/pdf/txt ─────────────────── */
+.card-media.icon {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  margin-top: 10px;
+}
+
+/* ─── (Optional) Add a small bottom margin so metadata never overlaps ───────── */
+.card .meta {
+  margin-top: 8px;
+}
+
+.form-group select {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    background: #fff;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+}
+
+.form-group select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    background: #fff;
+}

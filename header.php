@@ -20,7 +20,7 @@ if (session_status() === PHP_SESSION_NONE) {
     <ul>
       <li><a href="index.php">Home</a></li>
       <li><a href="catalogue.php">Talent Catalogue</a></li>
-      <li><a href="resourcesharing.php">Resource Sharing</a></li>
+      <li><a href="resourcesharing.php">Upload Portfolio</a></li>
       <li><a href="faq.php">FAQ</a></li>
     </ul>
     <ul class="user-menu">
@@ -47,6 +47,7 @@ if (session_status() === PHP_SESSION_NONE) {
             <img src="<?= htmlspecialchars($imgSrc) ?>" alt="Profile" class="icon">
           </a>
         </li>
+        <li class="logout"><a href="logout.php">Logout</a></li>
       <?php else: ?>
         <li><a href="login.php">Login</a></li>
         <li><a href="register.php">Register</a></li>
