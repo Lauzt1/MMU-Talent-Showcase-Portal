@@ -83,7 +83,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="col mb-3 mt-3">
                 <label for="password"><i
                   class="fa fa-lock"></i> Password</label>
-                <input type="text" name="password" id="password" 
+                <input type="password" name="password" id="password" 
                   class="form-control" required>
             </div>
             <div class="col mb-3 mt-3">
