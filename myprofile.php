@@ -56,9 +56,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         : null;  // if no boxes checked, store NULL
 
     // Validation
-    if (strlen($username) < 5) {
-        $msg = '<div class="error-msg">Username must be at least 5 characters.</div>';
-    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+   
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $msg = '<div class="error-msg">Please enter a valid email address.</div>';
     } else {
         // Handle profile picture upload (unchanged)
@@ -209,7 +208,7 @@ $currentBio      = htmlspecialchars($user['bio'] ?? '');
         <label for="username">Username</label>
         <div class="field-input">
           <input type="text" id="username" name="username"
-                 value="<?= $currentUsername ?>" disabled minlength="5">
+                 value="<?= $currentUsername ?>" >
           <img src="assets/misc/edit.png" alt="Edit" class="edit-btn" data-target="username" data-display="display-username">
         </div>
       </div>
