@@ -85,7 +85,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="mb-2 mt-2">
                 <label for="email"><i 
                   class="fa fa-envelope"></i> Email</label>
-                <input type="text" name="email" id="email"
+                <input type="email" name="email" id="email"
                   class="form-control" required>
             </div>
                  <div class="mb-2 mt-2">
