@@ -21,6 +21,58 @@ if (!$userCheckStmt->fetch()) {
 
 $msg = '';
 
+// VALIDATE USER EXISTS IN DATABASE
+$userCheckStmt = $pdo->prepare("SELECT id FROM userdata WHERE id = ?");
+$userCheckStmt->execute([$_SESSION['user_id']]);
+if (!$userCheckStmt->fetch()) {
+    session_destroy();
+    header('Location: login.php?error=invalid_session');
+    exit;
+}
+
+$msg = '';
+
+// ─── HANDLE DELETE REQUEST ──────────────────────────────────────────────────────
+if (isset($_GET['delete']) && is_numeric($_GET['delete'])) {
+    $deleteId = (int)$_GET['delete'];
+    
+    try {
+        // First, get the file path and verify ownership
+        $stmt = $pdo->prepare("SELECT file_path FROM resources WHERE id = ? AND user_id = ?");
+        $stmt->execute([$deleteId, $_SESSION['user_id']]);
+        $resource = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if ($resource) {
+            // Delete the file from server
+            $fullPath = __DIR__ . '/' . $resource['file_path'];
+            if (file_exists($fullPath)) {
+                unlink($fullPath);
+            }
+            
+            // Delete the database record
+            $deleteStmt = $pdo->prepare("DELETE FROM resources WHERE id = ? AND user_id = ?");
+            $deleteStmt->execute([$deleteId, $_SESSION['user_id']]);
+            
+            $msg = '<div class="success-msg">Resource deleted successfully.</div>';
+        } else {
+            $msg = '<div class="error-msg">Resource not found or you don\'t have permission to delete it.</div>';
+        }
+    } catch (PDOException $e) {
+        error_log("Delete error: " . $e->getMessage());
+        $msg = '<div class="error-msg">Error deleting resource. Please try again.</div>';
+    }
+    
+    // Redirect to prevent re-deletion on refresh
+    header('Location: resourcesharing.php?deleted=1');
+    exit;
+}
+
+// Show deletion confirmation message
+if (isset($_GET['deleted'])) {
+    $msg = '<div class="success-msg">Resource deleted successfully.</div>';
+}
+
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // ─── Allowed MIME types ──────────────────────────────────────────────
     $allowed = [
@@ -251,13 +303,29 @@ $uploads = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </p>
             <?php endif; ?>
             <small>Uploaded: <?= date('Y-m-d H:i', strtotime($u['uploaded_at'])) ?></small>
+             <!-- Delete Button -->
+            <div class="card-actions">
+              <button 
+                class="delete-btn" 
+                onclick="confirmDelete(<?= $u['id'] ?>, '<?= htmlspecialchars($u['title'], ENT_QUOTES) ?>')">
+                🗑️ Delete
+              </button>
           </div>
         </div>
+              </div>
         <?php endforeach; ?>
       </div>
     </section>
     <?php endif; ?>
   </div>
 </main>
+
+<script>
+function confirmDelete(id, title) {
+  if (confirm(`Are you sure you want to delete "${title}"?\n\nThis action cannot be undone.`)) {
+    window.location.href = `resourcesharing.php?delete=${id}`;
+  }
+}
+</script>
 
 <?php include 'footer.php'; ?>
