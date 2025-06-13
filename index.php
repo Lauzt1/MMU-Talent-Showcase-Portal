@@ -22,98 +22,187 @@
       </div>
     </section>
 
-    <!-- Latest Portfolio Updates -->
-    <section id="latest-uploads">
-      <h2>Latest Portfolio Updates</h2>
-      <div class="grid">
-        // only changes the folowing section for latest portfolio updates
-        <?php
-        // --- Pull the 4 most recently uploaded resources ---
-        include 'admin/config.php';
+<!-- Latest Portfolio Updates -->
+<section id="latest-uploads">
+  <h2>Latest Portfolio Updates</h2>
+  <div class="grid">
+    <?php
+    // --- Pull the 4 most recently uploaded resources ---
+    include 'admin/config.php';
 
-        try {
-          $stmt = $pdo->prepare("
-            SELECT r.*
-            FROM resources r
-            ORDER BY r.uploaded_at DESC
-            LIMIT 4
-          ");
-          $stmt->execute();
-          $latestUploads = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-          // If something goes wrong, show 4 placeholders instead
-          $latestUploads = [];
-        }
+    try {
+      $stmt = $pdo->prepare("
+        SELECT r.*
+        FROM resources r
+        ORDER BY r.uploaded_at DESC
+        LIMIT 4
+      ");
+      $stmt->execute();
+      $latestUploads = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+      // If something goes wrong, show 4 placeholders instead
+      $latestUploads = [];
+    }
 
-        if (empty($latestUploads)):
-          // If no uploads exist, fall back to placeholders
-          for ($i = 0; $i < 4; $i++): ?>
-            <div class="placeholder"></div>
-          <?php endfor;
-        else:
-          foreach ($latestUploads as $u):
-            // Determine which media/type to show
-            $filePath  = htmlspecialchars($u['file_path']);
-            $mimeType  = $u['mime_type'];
-            $title     = htmlspecialchars($u['title']);
-            $category  = htmlspecialchars($u['category']);
-            $uploaded  = date('Y-m-d H:i', strtotime($u['uploaded_at']));
-        ?>
-            <div class="card">
-              <!-- 1) Media (image / video / audio / file‐icon) -->
-              <?php if (strpos($mimeType, 'image/') === 0): ?>
-                <img class="card-media" src="<?= $filePath ?>" alt="<?= $title ?>">
-              
-              <?php elseif (strpos($mimeType, 'video/') === 0): ?>
-                <video class="card-media" controls>
-                  <source src="<?= $filePath ?>" type="<?= htmlspecialchars($mimeType) ?>">
-                  Your browser does not support the video tag.
-                </video>
-              
-              <?php elseif (strpos($mimeType, 'audio/') === 0): ?>
-                <a href="<?= $filePath ?>" target="_blank">
-                  <img
-                    class="card-media icon"
-                    src="assets/misc/audioicon.png"
-                    alt="Audio: <?= $title ?>"
-                  >
-                </a>
-              
-              <?php elseif ($mimeType === 'application/pdf' || $mimeType === 'text/plain'): ?>
-                <a href="<?= $filePath ?>" target="_blank">
-                  <img
-                    class="card-media icon"
-                    src="assets/misc/fileicon.png"
-                    alt="File: <?= $title ?>"
-                  >
-                </a>
-              <?php endif; ?>
+    if (empty($latestUploads)):
+      // If no uploads exist, fall back to placeholders
+      for ($i = 0; $i < 4; $i++): ?>
+        <div class="placeholder"></div>
+      <?php endfor;
+    else:
+      foreach ($latestUploads as $u):
+        // Determine which media/type to show
+        $filePath  = htmlspecialchars($u['file_path']);
+        $mimeType  = $u['mime_type'];
+        $title     = htmlspecialchars($u['title']);
+        $category  = htmlspecialchars($u['category']);
+        $uploaded  = date('Y-m-d H:i', strtotime($u['uploaded_at']));
+        $fullDesc  = htmlspecialchars($u['description']);
+        $shortDesc = strlen($u['description']) > 100 ? htmlspecialchars(substr($u['description'], 0, 100)) . '…' : $fullDesc;
+    ?>
+        <div class="card clickable-card" 
+             data-id="<?= $u['id'] ?>"
+             data-title="<?= $title ?>"
+             data-category="<?= $category ?>"
+             data-description="<?= $fullDesc ?>"
+             data-uploaded="<?= $uploaded ?>"
+             data-filepath="<?= $filePath ?>"
+             data-mimetype="<?= htmlspecialchars($mimeType) ?>">
+          
+          <!-- 1) Media (image / video / audio / file‐icon) -->
+          <?php if (strpos($mimeType, 'image/') === 0): ?>
+            <img class="card-media" src="<?= $filePath ?>" alt="<?= $title ?>">
+                         
+          <?php elseif (strpos($mimeType, 'video/') === 0): ?>
+            <video class="card-media" controls>
+              <source src="<?= $filePath ?>" type="<?= htmlspecialchars($mimeType) ?>">
+              Your browser does not support the video tag.
+            </video>
+                         
+          <?php elseif (strpos($mimeType, 'audio/') === 0): ?>
+            <a href="<?= $filePath ?>" target="_blank">
+              <img
+                class="card-media icon"
+                src="assets/misc/audioicon.png"
+                alt="Audio: <?= $title ?>"
+              >
+            </a>
+                         
+          <?php elseif ($mimeType === 'application/pdf' || $mimeType === 'text/plain'): ?>
+            <a href="<?= $filePath ?>" target="_blank">
+              <img
+                class="card-media icon"
+                src="assets/misc/fileicon.png"
+                alt="File: <?= $title ?>"
+              >
+            </a>
+          <?php endif; ?>
+           
+          <!-- 2) Meta -->
+          <div class="meta">
+            <h3><?= $title ?></h3>
+            <p class="category-label"><?= $category ?></p>
+             
+            <?php if (!empty($u['description'])): ?>
+              <p class="description"><?= nl2br($shortDesc) ?></p>
+            <?php endif; ?>
+             
+            <small class="upload-date">
+              Uploaded: <?= $uploaded ?>
+            </small>
+          </div>
+        </div>
+    <?php
+      endforeach;
+    endif;
+    ?>
+  </div>
+</section>
 
-              <!-- 2) Meta -->
-              <div class="meta">
-                <h3><?= $title ?></h3>
-                <p class="category-label"><?= $category ?></p>
+<!-- Modal for detailed view -->
+<div id="portfolioModal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <div id="modalBody">
+      <!-- Content will be populated by JavaScript -->
+    </div>
+  </div>
+</div>
 
-                <?php if (!empty($u['description'])):
-                  $desc = htmlspecialchars($u['description']);
-                  if (strlen($u['description']) > 100) {
-                    $desc = htmlspecialchars(substr($u['description'], 0, 100)) . '…';
-                  }
-                ?>
-                  <p class="description"><?= nl2br($desc) ?></p>
-                <?php endif; ?>
 
-                <small class="upload-date">
-                  Uploaded: <?= $uploaded ?>
-                </small>
-              </div>
-            </div>
-        <?php
-          endforeach;
-        endif;
-        ?>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const cards = document.querySelectorAll('.clickable-card');
+  const modal = document.getElementById('portfolioModal');
+  const modalBody = document.getElementById('modalBody');
+  const closeBtn = document.querySelector('.close');
+
+  // Add click event to each card
+  cards.forEach(card => {
+    card.addEventListener('click', function() {
+      const data = {
+        title: this.dataset.title,
+        category: this.dataset.category,
+        description: this.dataset.description,
+        uploaded: this.dataset.uploaded,
+        filepath: this.dataset.filepath,
+        mimetype: this.dataset.mimetype
+      };
+      
+      showModal(data);
+    });
+  });
+
+  // Close modal events
+  closeBtn.addEventListener('click', closeModal);
+  window.addEventListener('click', function(event) {
+    if (event.target === modal) {
+      closeModal();
+    }
+  });
+
+  function showModal(data) {
+    let mediaHtml = '';
+    
+    // Generate media HTML based on type
+    if (data.mimetype.startsWith('image/')) {
+      mediaHtml = `<img class="modal-media" src="${data.filepath}" alt="${data.title}">`;
+    } else if (data.mimetype.startsWith('video/')) {
+      mediaHtml = `
+        <video class="modal-media" controls>
+          <source src="${data.filepath}" type="${data.mimetype}">
+          Your browser does not support the video tag.
+        </video>`;
+    } else if (data.mimetype.startsWith('audio/')) {
+      mediaHtml = `
+        <audio class="modal-media" controls style="width: 100%;">
+          <source src="${data.filepath}" type="${data.mimetype}">
+          Your browser does not support the audio tag.
+        </audio>`;
+    } else {
+      mediaHtml = `<p><a href="${data.filepath}" target="_blank">View/Download File</a></p>`;
+    }
+
+    modalBody.innerHTML = `
+      ${mediaHtml}
+      <div class="modal-info">
+        <h2>${data.title}</h2>
+        <span class="modal-category">${data.category}</span>
+        <p class="modal-description">${data.description.replace(/\n/g, '<br>')}</p>
+        <p class="modal-date">Uploaded: ${data.uploaded}</p>
       </div>
-    </section>
+    `;
+    
+    modal.style.display = 'block';
+    document.body.style.overflow = 'hidden'; // Prevent background scrolling
+  }
+
+  function closeModal() {
+    modal.style.display = 'none';
+    document.body.style.overflow = 'auto'; // Restore scrolling
+  }
+});
+</script>
   </div>
 
   <!-- Sidebar -->
