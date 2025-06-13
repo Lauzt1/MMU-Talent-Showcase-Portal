@@ -220,3 +220,29 @@
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
     background: #fff;
 }
+
+.card-actions {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #eee;
+}
+
+.delete-btn {
+  background: #ff4757;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: background 0.3s ease;
+}
+
+.delete-btn:hover {
+  background: #ff3838;
+  transform: translateY(-1px);
+}
+
+.delete-btn:active {
+  transform: translateY(0);
+}
