@@ -82,6 +82,9 @@
   flex: 1;
   padding: 30px;
   box-sizing: border-box;
+  /* Make flexible so we can reorder fields */
+  display: flex;
+  flex-direction: column;
 }
 
 .profile-right .field-group {
@@ -125,6 +128,11 @@
   outline: none;
   border-color: #667eea;
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* Hide edit button for email field */
+.field-input input#email + .edit-btn {
+  display: none;
 }
 
 .edit-btn {
@@ -251,4 +259,26 @@
   width: 16px;
   height: 16px;
   cursor: pointer;
+}
+
+/* ─── Fix mis-alignment after swapping Email/Username ─────────────── */
+.field-input {
+  position: relative;                 /* let us absolutely-place the icon */
+}
+
+/* give every text/email/textarea a little right-padding so
+   text never hides under the (now absolutely-placed) pencil icon */
+.field-input input[type="text"],
+.field-input input[type="email"],
+.field-input textarea {
+  padding-right: 46px;                /* 24 px icon + 12 px breathing room */
+}
+
+/* float the pencil; remove its old margin so it no longer pushes things */
+.field-input .edit-btn {
+  position: absolute;
+  top: 50%;
+  right: 14px;                        /* visually centred in the padding-right zone */
+  transform: translateY(-50%);
+  margin: 0;                          /* overrides the previous margin-left:10px; */
 }
