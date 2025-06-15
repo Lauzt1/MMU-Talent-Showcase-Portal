@@ -37,7 +37,7 @@ if (session_status() === PHP_SESSION_NONE) {
           ) {
             $imgSrc = $row['profile_pic'];
           } else {
-            $imgSrc = 'assets/contributor/icon.jpg';
+            $imgSrc = '../assets/contributor/icon.jpg';
           }
         ?>
         <li>
