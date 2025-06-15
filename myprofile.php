@@ -201,17 +201,6 @@ $currentBio      = htmlspecialchars($user['bio'] ?? '');
       </div>
     </div>
 
-       <!-- Right Column: Editable Fields (modified talent_category section) -->
-    <div class="field-group">
-       <label for="username">Username</label>
-       <div class="field-input">
-         <input type="text" id="username" name="username"
-                value="<?= $currentUsername ?>">
-         <img src="assets/misc/edit.png" alt="Edit" class="edit-btn"
-              data-target="username" data-display="display-username">
-       </div>
-     </div>
-
     <div class="profile-right">
       <!-- Email Field (read-only) – now correctly INSIDE .profile-right -->
     <div class="field-group">
@@ -223,6 +212,17 @@ $currentBio      = htmlspecialchars($user['bio'] ?? '');
       </div>
     </div>
 
+         <!-- Right Column: Editable Fields (modified talent_category section) -->
+    <div class="field-group">
+       <label for="username">Username</label>
+       <div class="field-input">
+         <input type="text" id="username" name="username"
+                value="<?= $currentUsername ?>">
+         <img src="assets/misc/edit.png" alt="Edit" class="edit-btn"
+              data-target="username" data-display="display-username">
+       </div>
+     </div>
+        
       <!-- Bio Field (unchanged) -->
       <div class="field-group">
         <label for="bio">Bio</label>
