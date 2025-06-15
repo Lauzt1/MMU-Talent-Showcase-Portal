@@ -13,11 +13,7 @@ $msg = '';
 
 // Define the five possible categories
 $allCats = [
-    'Art & Design',
-    'Music & Audio',
-    'Video & Film',
-    'Writing & Documents',
-    'others'
+    'Admin'
 ];
 
 // Precompute which categories are currently "checked"
@@ -213,6 +209,23 @@ $currentBio      = htmlspecialchars($user['bio'] ?? '');
         <div class="field-input">
           <textarea id="bio" name="bio" rows="3" disabled><?= $currentBio ?></textarea>
           <img src="../assets/misc/edit.png" alt="Edit" class="edit-btn" data-target="bio" data-display="display-bio">
+        </div>
+      </div>
+
+      <!-- NEW: Talent Category Field as Checkboxes -->
+      <div class="field-group">
+        <label for="talent_category[]">Talent Category <small>(Optional display)</small></label>
+        <div class="field-input checkbox-group">
+          <?php foreach ($allCats as $cat): ?>
+            <label class="checkbox-label">
+              <input
+                type="checkbox"
+                name="talent_category[]"
+                value="<?= htmlspecialchars($cat) ?>"
+                <?= in_array($cat, $currentCats, true) ? 'checked' : '' ?>>
+              <?= htmlspecialchars($cat) ?>
+            </label>
+          <?php endforeach; ?>
         </div>
       </div>
 
