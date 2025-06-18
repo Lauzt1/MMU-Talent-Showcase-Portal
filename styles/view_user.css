@@ -1,0 +1,154 @@
+
+
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Times New Roman", Times, serif;
+  background-color: #f1f5f9;
+}
+
+.profile-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60px 20px;
+}
+
+.profile-card {
+  background-color: #fff;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  display: flex;
+  gap: 40px;
+  max-width: 900px;
+  width: 100%;
+  padding: 40px;
+  margin-bottom: 20px;
+  font-family: "Times New Roman", Times, serif;
+}
+
+.profile-left {
+  flex: 1;
+  text-align: center;
+}
+
+.avatar {
+  width: 150px;
+  height: 150px;
+  border: 3px solid #3b82f6;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto 15px;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-left h2 {
+  margin-top: 0;
+  font-size: 1.8rem;
+  color: #111827;
+  font-family: "Times New Roman", Times, serif;
+}
+
+.profile-right {
+  flex: 2;
+  font-family: "Times New Roman", Times, serif;
+}
+
+/* Form input styles */
+.profile-field {
+  margin-bottom: 22px;
+}
+
+.profile-field label {
+  display: block;
+  font-weight: bold;
+  color: #6b7280;
+  margin-bottom: 6px;
+  font-size: 16px;
+  font-family: "Times New Roman", Times, serif;
+}
+
+.profile-right input,
+.profile-right select,
+.profile-right textarea {
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #f9fafb;
+  color: #111827;
+  box-sizing: border-box;
+  font-family: "Times New Roman", Times, serif;
+}
+
+.profile-right textarea {
+  resize: vertical;
+}
+
+/* Buttons */
+.back-button {
+  text-align: center;
+  font-family: "Times New Roman", Times, serif;
+}
+
+.back-button button {
+  background-color: #10b981;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-right: 10px;
+  transition: background-color 0.3s ease;
+  font-family: "Times New Roman", Times, serif;
+}
+
+.back-button button:hover {
+  background-color: #059669;
+}
+
+.back-button a {
+  text-decoration: none;
+  color: #fff;
+  background-color: #3b82f6;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+  display: inline-block;
+  font-family: "Times New Roman", Times, serif;
+}
+
+.back-button a:hover {
+  background-color: #2563eb;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .profile-card {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .profile-right {
+    width: 100%;
+  }
+
+  .profile-field {
+    text-align: left;
+  }
+
+  .back-button {
+    width: 100%;
+    margin-top: 10px;
+  }
+}
