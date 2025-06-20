@@ -16,9 +16,59 @@
     <section id="featured-talents">
       <h2>Featured Talents</h2>
       <div class="grid">
-        <?php for($i=0;$i<5;$i++): ?>
-          <div class="placeholder"></div>
-        <?php endfor; ?>
+        <?php
+        // --- Pull the top 4 talents by avg_rating & total_ratings ---
+        include 'admin/config.php';
+        try {
+          $stmt = $pdo->prepare("
+            SELECT
+              u.id,
+              u.username,
+              u.profile_pic,
+              COALESCE(ur.avg_rating, 0) AS avg_rating,
+              COALESCE(ur.total_ratings, 0) AS total_ratings
+            FROM userdata u
+            LEFT JOIN user_ratings ur
+              ON u.id = ur.user_id
+            ORDER BY
+              ur.avg_rating DESC,
+              ur.total_ratings DESC
+            LIMIT 4
+          ");
+          $stmt->execute();
+          $featured = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+          $featured = [];
+        }
+
+        if (empty($featured)):
+          // fallback placeholders
+          for ($i = 0; $i < 4; $i++): ?>
+            <div class="placeholder"></div>
+          <?php endfor;
+        else:
+          foreach ($featured as $t):
+            $pic   = $t['profile_pic'] ?: 'assets/contributor/icon.jpg';
+            $name  = htmlspecialchars($t['username'], ENT_QUOTES);
+            $avg   = number_format((float)$t['avg_rating'], 1);
+            $total = (int)$t['total_ratings'];
+        ?>
+            <a href="userprofile.php?user_id=<?= $t['id'] ?>"
+               class="card talent-card clickable-card">
+              <img class="card-media"
+                   src="<?= htmlspecialchars($pic, ENT_QUOTES) ?>"
+                   alt="Profile of <?= $name ?>">
+              <div class="meta">
+                <h3><?= $name ?></h3>
+                <div class="rating-display">
+                  <?= $avg ?>★ (<?= $total ?>)
+                </div>
+              </div>
+            </a>
+        <?php
+          endforeach;
+        endif;
+        ?>
       </div>
     </section>
 

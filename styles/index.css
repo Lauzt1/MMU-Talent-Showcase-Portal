@@ -75,7 +75,7 @@ section h2 {
   margin-bottom: 20px;
 }
 
-/* 5. Grid & Placeholder Cards (generic) */
+/* 5. Generic Grid & Placeholder Cards */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -166,18 +166,15 @@ section h2 {
   }
 }
 
-/* changes for latest portfolio updates */
-
-/* 8b. Force each card to fill exactly 150×150 */
+/* 8. Latest Portfolio Updates */
 #latest-uploads .card {
   width: 150px;
   height: 150px;
   overflow: hidden;
-  position: relative;
   background-color: #fff;
   border: 1px solid #e0e0e0;
   border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
   transition: transform 0.2s ease;
 }
 #latest-uploads .card:hover {
@@ -187,8 +184,8 @@ section h2 {
 /* 8c. Force the media (image/video) to cover the entire 150×150 */
 #latest-uploads .card-media {
   width: 100%;
-  height: 100%;        
-  object-fit: cover;   /* crop to fill box */
+  height: 100%;
+  object-fit: cover;
   display: block;
 }
 
@@ -197,7 +194,7 @@ section h2 {
   width: 100px;
   height: 100px;
   object-fit: contain;
-  margin: 25px auto 0; /* vertically center (150–100=50; 50/2=25) */
+  margin: 25px auto 0;
 }
 
 /* 8e. Hide all meta text so nothing pushes card taller */
@@ -205,10 +202,52 @@ section h2 {
   display: none;
 }
 
-/* Clickable card styles */
+/* 9. Featured Talents */
+#featured-talents {
+  /* gap before the next section */
+  margin-bottom: 60px;
+}
+#featured-talents .card {
+  width: 150px;
+  /* allow card to grow for text */
+  height: auto;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+#featured-talents .card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+/* make image thumbnail exactly 150×150 */
+#featured-talents .card-media {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  display: block;
+  border-bottom: 1px solid #e0e0e0;
+}
+/* show name & rating under the image */
+#featured-talents .meta {
+  display: block;
+  padding: 10px 0;
+  text-align: center;
+}
+#featured-talents .meta h3 {
+  margin: 0 0 5px;
+  font-size: 1rem;
+}
+#featured-talents .rating-display {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+/* 10. Clickable-Card Hover */
 .clickable-card {
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .clickable-card:hover {
@@ -216,7 +255,7 @@ section h2 {
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
-/* Modal styles */
+/* 11. Modal Styles */
 .modal {
   position: fixed;
   z-index: 1000;
@@ -267,12 +306,12 @@ section h2 {
 .modal-info h2 {
   margin-top: 0;
   color: #333;
-  padding-right: 40px; /* Space for close button */
+  padding-right: 40px;
 }
 
 .modal-category {
   background: #007cba;
-  color: white;
+  color: #fff;
   padding: 5px 10px;
   border-radius: 4px;
   display: inline-block;
@@ -299,13 +338,13 @@ section h2 {
     margin: 10% auto;
     padding: 15px;
   }
-  
+
   .close {
     font-size: 24px;
     right: 10px;
     top: 5px;
   }
-  
+
   .modal-info h2 {
     font-size: 1.5em;
     padding-right: 35px;
