@@ -15,5 +15,6 @@
     <a href="announcement.php" class="admin-card">Announcement Management</a>
     <a href="faq-admin.php" class="admin-card">FAQ Management</a>
     <a href="approve_passwords.php" class="admin-card">User's Password Request</a></div>
+    <a href="approve_passwords.php" class="admin-card">User's Password Request</a>
 
 <?php include 'footer.php'; ?>
