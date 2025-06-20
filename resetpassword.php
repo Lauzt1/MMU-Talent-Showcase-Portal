@@ -15,7 +15,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $pdo->prepare("INSERT INTO password_resets (email, token, expires_at) VALUES (?, ?, ?)")
             ->execute([$email, $token, $expires]);
 
-        $resetLink = "http://localhost/MMU-Talent-Showcase-Portal/newpassword.php?token=" . $token;
+        $resetLink = "http://localhost/MMU-Talent-Showcase/forgot_password.php?token=" . $token;
 
 
         // Simulated email output
