@@ -154,7 +154,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 if (!empty($user['profile_pic']) && file_exists(__DIR__ . '/' . $user['profile_pic'])) {
     $currentPic = $user['profile_pic'];
 } else {
-    $currentPic = 'assets/contributor/icon.jpg';
+    $currentPic = '../assets/contributor/icon.jpg';
 }
 
 // Escape current values for display
