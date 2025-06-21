@@ -27,7 +27,7 @@ Open **XAMPP Control Panel** and click `Start` for both **Apache** and **MySQL**
    🔗 `http://localhost/phpmyadmin`
 2. Create a new database named:  
    🔸 `mmu_talent_showcase`
-3. Click **Import**, select the provided SQL file: mmu_talent_showcase.sql, and import it.
+3. Click **Import**, select the provided SQL file: **mmu_talent_showcase.sql**, and import it.
 4. You should now see **10 tables** successfully created.
 
 ---
