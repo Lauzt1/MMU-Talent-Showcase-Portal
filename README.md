@@ -38,7 +38,7 @@ Open **XAMPP Control Panel** and click `Start` for both **Apache** and **MySQL**
   `http://localhost/mmu-talent-showcase/index.php`
 
 - 🔹 Admin Page:  
-  `http://localhost/mmu-talent-showcase/index.php`  
+  `http://localhost/mmu-talent-showcase/admin/index.php`  
   (Admin login required)
 
 - 🔹 Database Access:  
