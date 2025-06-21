@@ -98,6 +98,10 @@ $allUsers = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <main class="catalogue-container">
   <!-- Filter pills for categories and sorting -->
   <div class="filter-container">
+    <div class="sort-pills">
+      <a href="?category=<?= htmlspecialchars($selCategory) ?>&sort=recent" class="pill <?= $selSort === 'recent' ? 'active' : '' ?>">Recent</a>
+      <a href="?category=<?= htmlspecialchars($selCategory) ?>&sort=top" class="pill <?= $selSort === 'top' ? 'active' : '' ?>">Top</a>
+    </div>
     <div class="category-pills">
       <a href="?category=All&sort=<?= htmlspecialchars($selSort) ?>" class="pill <?= $selCategory === 'All' ? 'active' : '' ?>">All</a>
       <?php foreach ($validCats as $category): ?>
@@ -105,10 +109,6 @@ $allUsers = $stmt->fetchAll(PDO::FETCH_ASSOC);
           <a href="?category=<?= urlencode($category) ?>&sort=<?= htmlspecialchars($selSort) ?>" class="pill <?= $selCategory === $category ? 'active' : '' ?>"><?= htmlspecialchars($category) ?></a>
         <?php endif; ?>
       <?php endforeach; ?>
-    </div>
-    <div class="sort-pills">
-      <a href="?category=<?= htmlspecialchars($selCategory) ?>&sort=recent" class="pill <?= $selSort === 'recent' ? 'active' : '' ?>">Recent</a>
-      <a href="?category=<?= htmlspecialchars($selCategory) ?>&sort=top" class="pill <?= $selSort === 'top' ? 'active' : '' ?>">Top</a>
     </div>
   </div>
 
