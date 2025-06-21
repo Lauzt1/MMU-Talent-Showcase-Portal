@@ -55,6 +55,18 @@ if ($selSort === 'top') {
     ";
 }
 
+if (empty($whereClause)) {
+    $whereClause = "WHERE u.role = 'user'";
+} else {
+    // If whereClause already has WHERE, replace it
+    if (stripos($whereClause, 'WHERE') === 0) {
+        $whereClause = str_ireplace('WHERE', 'WHERE u.role = \'user\' AND', $whereClause);
+    } else {
+        // If whereClause doesn't have WHERE, add it
+        $whereClause = "WHERE u.role = 'user' AND " . $whereClause;
+    }
+}
+
 // 6. Main SQL
 $sql = "
   SELECT
