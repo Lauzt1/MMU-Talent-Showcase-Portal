@@ -103,6 +103,8 @@ $userEmail = getUserEmail($pdo, $profileId);
   .modal-content { padding: 1rem; }
   .modal-rating { margin: 1rem 0; }
   .rating-input { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem; }
+  /* Resource card rating */
+  .resource-rating { margin-top: 0.5rem; font-size: 0.9rem; color: #555; }
 </style>
 
 <main class="userprofile-container">
@@ -186,6 +188,10 @@ $userEmail = getUserEmail($pdo, $profileId);
               <small class="resource-date">
                 Uploaded: <?= date('Y-m-d H:i', strtotime($r['uploaded_at'])) ?>
               </small>
+              <!-- Display average rating and count -->
+              <p class="resource-rating">
+                ⭐ <?= htmlspecialchars($r['avg_rating']) ?> (<?= htmlspecialchars($r['total_ratings']) ?> ratings)
+              </p>
             </div>
           </div>
         <?php endforeach; ?>
