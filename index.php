@@ -30,6 +30,7 @@
             FROM userdata u
             LEFT JOIN user_ratings ur
               ON u.id = ur.user_id
+            WHERE u.role = 'user'
             ORDER BY
               ur.avg_rating DESC,
               ur.total_ratings DESC
