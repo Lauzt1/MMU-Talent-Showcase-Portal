@@ -39,7 +39,7 @@
     <!-- Always send “recent” -->
     <input type="hidden" name="sort" value="recent">
 
-    <button type="submit">Go 🔍</button>
+    <button type="submit">🔍</button>
   </form>
 </section>
 
