@@ -16,7 +16,46 @@ if (!$profileId || !is_numeric($profileId)) {
     exit;
 }
 
-// 3. Fetch user
+// 3. Handle rating submission (insert or update)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['resource_id'], $_POST['rating'])) {
+    $resId         = (int) $_POST['resource_id'];
+    $rating        = (int) $_POST['rating'];
+    $currentUserId = $_SESSION['user_id'];
+
+    // Check if this user has already rated this resource
+    $checkStmt = $pdo->prepare("
+        SELECT id
+          FROM resource_ratings
+         WHERE resource_id = ?
+           AND user_id     = ?
+    ");
+    $checkStmt->execute([$resId, $currentUserId]);
+
+    if ($checkStmt->rowCount() > 0) {
+        // Update existing rating
+        $upd = $pdo->prepare("
+            UPDATE resource_ratings
+               SET rating     = ?,
+                   created_at = NOW()
+             WHERE resource_id = ?
+               AND user_id     = ?
+        ");
+        $upd->execute([$rating, $resId, $currentUserId]);
+    } else {
+        // Insert new rating
+        $ins = $pdo->prepare("
+            INSERT INTO resource_ratings (resource_id, user_id, rating)
+            VALUES (?, ?, ?)
+        ");
+        $ins->execute([$resId, $currentUserId, $rating]);
+    }
+
+    // Redirect to avoid resubmission & refresh averages
+    header("Location: userprofile.php?user_id={$profileId}");
+    exit;
+}
+
+// 4. Fetch profile user
 $stmt = $pdo->prepare("SELECT * FROM userdata WHERE id = ?");
 $stmt->execute([$profileId]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -25,48 +64,54 @@ if (!$user) {
     exit;
 }
 
-// 4. Profile picture or placeholder
-if (!empty($user['profile_pic']) && file_exists(__DIR__ . '/' . $user['profile_pic'])) {
-    $pic = $user['profile_pic'];
-} else {
-    $pic = 'assets/contributor/icon.jpg';
-}
-
-// 5. Function to get user email
-function getUserEmail($pdo, $userId) {
-    $stmt = $pdo->prepare("SELECT email FROM userdata WHERE id = ?");
-    $stmt->execute([$userId]);
-    $result = $stmt->fetch(PDO::FETCH_ASSOC);
-    return $result ? $result['email'] : null;
-}
-
-// 6. Fetch resources (newest first)
-$resStmt = $pdo->prepare("
-    SELECT * FROM resources 
-    WHERE user_id = ? AND status = 'approved'
-    ORDER BY uploaded_at DESC
-");
-$resStmt->execute([$profileId]);
-$resources = $resStmt->fetchAll(PDO::FETCH_ASSOC);
-
-// 7. Prepare category pills
+// 5. Prepare category pills
 $currentCats = [];
 if (!empty($user['talent_category'])) {
     $currentCats = explode(',', $user['talent_category']);
 }
 $colors = ['#667eea','#764ba2','#6b8e23','#ff6b6b','#48dbfb','#feca57','#ffa502','#1e90ff'];
 
-// Get user email
+// 6. Fetch resources with their average & total ratings
+$resStmt = $pdo->prepare("
+    SELECT
+      r.*,
+      COALESCE(ROUND(AVG(rr.rating), 1), 0) AS avg_rating,
+      COUNT(rr.id)               AS total_ratings
+    FROM resources r
+    LEFT JOIN resource_ratings rr
+      ON rr.resource_id = r.id
+    WHERE r.user_id = ?
+      AND r.status  = 'approved'
+    GROUP BY r.id
+    ORDER BY r.uploaded_at DESC
+");
+$resStmt->execute([$profileId]);
+$resources = $resStmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Helper to get email
+function getUserEmail($pdo, $userId) {
+    $e = $pdo->prepare("SELECT email FROM userdata WHERE id = ?");
+    $e->execute([$userId]);
+    $row = $e->fetch(PDO::FETCH_ASSOC);
+    return $row ? $row['email'] : null;
+}
 $userEmail = getUserEmail($pdo, $profileId);
 ?>
 <link rel="stylesheet" href="styles/userprofile.css">
+<style>
+  /* Ensure rating area has breathing room */
+  .modal-content { padding: 1rem; }
+  .modal-rating { margin: 1rem 0; }
+  .rating-input { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem; }
+</style>
 
 <main class="userprofile-container">
-
   <!-- PROFILE CARD -->
   <div class="profile-card">
     <div class="profile-header">
-      <img src="<?= htmlspecialchars($pic) ?>"
+      <img src="<?= !empty($user['profile_pic']) && file_exists(__DIR__.'/'.$user['profile_pic'])
+                   ? htmlspecialchars($user['profile_pic'])
+                   : 'assets/contributor/icon.jpg' ?>"
            alt="Profile of <?= htmlspecialchars($user['username']) ?>"
            class="profile-pic">
       <h2><?= htmlspecialchars($user['username']) ?></h2>
@@ -74,23 +119,16 @@ $userEmail = getUserEmail($pdo, $profileId);
         <p class="bio"><?= nl2br(htmlspecialchars($user['bio'])) ?></p>
       <?php endif; ?>
 
-      <!-- Email display section -->
-      <?php if (!empty($userEmail)): ?>
-        <div class="contact-info">
-          <p class="find-me-here">Find me here: 
-            <a href="mailto:<?= htmlspecialchars($userEmail) ?>" class="email-link">
-              <?= htmlspecialchars($userEmail) ?>
-            </a>
-          </p>
-        </div>
+      <?php if ($userEmail): ?>
+        <p>Contact: <a href="mailto:<?= htmlspecialchars($userEmail) ?>">
+          <?= htmlspecialchars($userEmail) ?></a></p>
       <?php endif; ?>
 
       <div class="category-pills">
         <?php foreach ($currentCats as $cat):
           $color = $colors[array_rand($colors)];
         ?>
-          <span class="pill"
-                style="background-color: <?= $color ?>;">
+          <span class="pill" style="background: <?= $color ?>;">
             <?= htmlspecialchars($cat) ?>
           </span>
         <?php endforeach; ?>
@@ -98,37 +136,35 @@ $userEmail = getUserEmail($pdo, $profileId);
     </div>
   </div>
 
-  <!-- RESOURCES CARD -->
+  <!-- RESOURCES GRID -->
   <div class="resources-card">
     <h3>Resources</h3>
     <?php if ($resources): ?>
       <div class="resources-grid">
-        <?php foreach ($resources as $r): 
-          $filePath  = htmlspecialchars($r['file_path']);
-          $mimeType  = $r['mime_type'];
-          $title     = htmlspecialchars($r['title']);
-          $category  = htmlspecialchars($r['category']);
-          $uploaded  = date('Y-m-d H:i', strtotime($r['uploaded_at']));
-          $fullDesc  = htmlspecialchars($r['description']);
-          $shortDesc = strlen($r['description']) > 100 ? htmlspecialchars(substr($r['description'], 0, 100)) . '…' : $fullDesc;
+        <?php foreach ($resources as $r):
+          $descFull  = htmlspecialchars($r['description']);
+          $descShort = strlen($r['description']) > 100
+                     ? nl2br(htmlspecialchars(substr($r['description'],0,100))) . '…'
+                     : nl2br($descFull);
         ?>
           <div class="resource-card clickable-card"
                data-id="<?= $r['id'] ?>"
-               data-title="<?= $title ?>"
-               data-category="<?= $category ?>"
-               data-description="<?= $fullDesc ?>"
-               data-uploaded="<?= $uploaded ?>"
-               data-filepath="<?= $filePath ?>"
-               data-mimetype="<?= htmlspecialchars($mimeType) ?>">
+               data-title="<?= htmlspecialchars($r['title']) ?>"
+               data-category="<?= htmlspecialchars($r['category']) ?>"
+               data-description="<?= $descFull ?>"
+               data-uploaded="<?= date('Y-m-d H:i', strtotime($r['uploaded_at'])) ?>"
+               data-filepath="<?= htmlspecialchars($r['file_path']) ?>"
+               data-mimetype="<?= htmlspecialchars($r['mime_type']) ?>"
+               data-avgrating="<?= $r['avg_rating'] ?>"
+               data-totalratings="<?= $r['total_ratings'] ?>">
             
             <?php if (strpos($r['mime_type'], 'image/') === 0): ?>
-              <img src="<?= htmlspecialchars($r['file_path']) ?>"
+              <img src="<?= $r['file_path'] ?>"
                    alt="<?= htmlspecialchars($r['title']) ?>"
                    class="resource-media">
             <?php elseif (strpos($r['mime_type'], 'video/') === 0): ?>
-              <video src="<?= htmlspecialchars($r['file_path']) ?>"
-                     controls
-                     class="resource-media"></video>
+              <video src="<?= $r['file_path'] ?>"
+                     controls class="resource-media"></video>
             <?php elseif (strpos($r['mime_type'], 'audio/') === 0): ?>
               <div class="resource-media-container">
                 <img src="assets/misc/audioicon.png"
@@ -142,15 +178,13 @@ $userEmail = getUserEmail($pdo, $profileId);
                      class="resource-media icon">
               </div>
             <?php endif; ?>
-            
+
             <div class="resource-info">
               <h4><?= htmlspecialchars($r['title']) ?></h4>
-              <p class="resource-category"><?= $category ?></p>
-              <?php if (!empty($r['description'])): ?>
-                <p class="resource-description"><?= nl2br($shortDesc) ?></p>
-              <?php endif; ?>
+              <p class="resource-category"><?= htmlspecialchars($r['category']) ?></p>
+              <p class="resource-description"><?= $descShort ?></p>
               <small class="resource-date">
-                Uploaded: <?= $uploaded ?>
+                Uploaded: <?= date('Y-m-d H:i', strtotime($r['uploaded_at'])) ?>
               </small>
             </div>
           </div>
@@ -160,89 +194,69 @@ $userEmail = getUserEmail($pdo, $profileId);
       <p class="no-resources">No resources available.</p>
     <?php endif; ?>
   </div>
-
 </main>
 
 <!-- Modal for detailed view -->
 <div id="portfolioModal" class="modal" style="display: none;">
   <div class="modal-content">
     <span class="close">&times;</span>
-    <div id="modalBody">
-      <!-- Content will be populated by JavaScript -->
-    </div>
+    <div id="modalBody"><!-- Populated via JS --></div>
   </div>
 </div>
 
 <script>
+const profileId = <?= json_encode($profileId) ?>;
+
 document.addEventListener('DOMContentLoaded', function() {
-  const cards = document.querySelectorAll('.clickable-card');
-  const modal = document.getElementById('portfolioModal');
-  const modalBody = document.getElementById('modalBody');
-  const closeBtn = document.querySelector('.close');
+  const cards    = document.querySelectorAll('.clickable-card');
+  const modal    = document.getElementById('portfolioModal');
+  const modalBody= document.getElementById('modalBody');
+  const closeBtn = modal.querySelector('.close');
 
-  // Add click event to each card
-  cards.forEach(card => {
-    card.addEventListener('click', function(e) {
-      // Prevent default behavior for links and videos
-      e.preventDefault();
-      
-      const data = {
-        title: this.dataset.title,
-        category: this.dataset.category,
-        description: this.dataset.description,
-        uploaded: this.dataset.uploaded,
-        filepath: this.dataset.filepath,
-        mimetype: this.dataset.mimetype
-      };
-      
-      showModal(data);
-    });
-    
-    // Add cursor pointer to indicate clickability
-    card.style.cursor = 'pointer';
-  });
+  cards.forEach(card => card.addEventListener('click', function(e) {
+    e.preventDefault();
+    const data = {
+      id:           this.dataset.id,
+      title:        this.dataset.title,
+      category:     this.dataset.category,
+      description:  this.dataset.description,
+      uploaded:     this.dataset.uploaded,
+      filepath:     this.dataset.filepath,
+      mimetype:     this.dataset.mimetype,
+      avgRating:    this.dataset.avgrating,
+      totalRatings: this.dataset.totalratings
+    };
+    showModal(data);
+  }));
 
-  // Close modal events
   closeBtn.addEventListener('click', closeModal);
-  window.addEventListener('click', function(event) {
-    if (event.target === modal) {
-      closeModal();
-    }
-  });
-
-  // Close modal with Escape key
-  document.addEventListener('keydown', function(event) {
-    if (event.key === 'Escape' && modal.style.display === 'block') {
-      closeModal();
-    }
-  });
+  window.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+  document.addEventListener('keyup', e => { if (e.key === 'Escape') closeModal(); });
 
   function showModal(data) {
     let mediaHtml = '';
-    
-    // Generate media HTML based on type
     if (data.mimetype.startsWith('image/')) {
       mediaHtml = `<img class="modal-media" src="${data.filepath}" alt="${data.title}">`;
     } else if (data.mimetype.startsWith('video/')) {
       mediaHtml = `
         <video class="modal-media" controls>
           <source src="${data.filepath}" type="${data.mimetype}">
-          Your browser does not support the video tag.
         </video>`;
     } else if (data.mimetype.startsWith('audio/')) {
       mediaHtml = `
         <div class="modal-audio-container">
-          <img src="assets/misc/audioicon.png" alt="Audio file" class="modal-audio-icon">
-          <audio class="modal-media" controls style="width: 100%; margin-top: 10px;">
+          <img src="assets/misc/audioicon.png" class="modal-audio-icon">
+          <audio class="modal-media" controls>
             <source src="${data.filepath}" type="${data.mimetype}">
-            Your browser does not support the audio tag.
           </audio>
         </div>`;
     } else {
       mediaHtml = `
         <div class="modal-file-container">
-          <img src="assets/misc/fileicon.png" alt="File" class="modal-file-icon">
-          <p><a href="${data.filepath}" target="_blank" class="modal-file-link">View/Download File</a></p>
+          <img src="assets/misc/fileicon.png" class="modal-file-icon">
+          <p><a href="${data.filepath}" target="_blank" class="modal-file-link">
+            View/Download File
+          </a></p>
         </div>`;
     }
 
@@ -251,18 +265,42 @@ document.addEventListener('DOMContentLoaded', function() {
       <div class="modal-info">
         <h2>${data.title}</h2>
         <span class="modal-category">${data.category}</span>
-        <p class="modal-description">${data.description.replace(/\n/g, '<br>')}</p>
+        <p class="modal-description">${data.description.replace(/\n/g,'<br>')}</p>
         <p class="modal-date">Uploaded: ${data.uploaded}</p>
       </div>
+      <div class="modal-rating">
+        <p>Average Rating: <strong>${data.avgRating}</strong>
+           (${data.totalRatings} ratings)</p>
+        <div class="rating-input">
+          <label for="ratingSelect">Your Rating:</label>
+          <select id="ratingSelect">
+            <option value="1">1</option><option value="2">2</option>
+            <option value="3">3</option><option value="4">4</option>
+            <option value="5">5</option>
+          </select>
+          <button id="submitRating">Submit</button>
+        </div>
+      </div>
     `;
-    
+    document.getElementById('submitRating').addEventListener('click', function() {
+      const rating = document.getElementById('ratingSelect').value;
+      const form   = document.createElement('form');
+      form.method  = 'POST';
+      form.action  = `userprofile.php?user_id=${profileId}`;
+      form.innerHTML = 
+        `<input type="hidden" name="resource_id" value="${data.id}">` +
+        `<input type="hidden" name="rating"      value="${rating}">`;
+      document.body.append(form);
+      form.submit();
+    });
+
     modal.style.display = 'block';
-    document.body.style.overflow = 'hidden'; // Prevent background scrolling
+    document.body.style.overflow = 'hidden';
   }
 
   function closeModal() {
     modal.style.display = 'none';
-    document.body.style.overflow = 'auto'; // Restore scrolling
+    document.body.style.overflow = 'auto';
   }
 });
 </script>
