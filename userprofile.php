@@ -32,7 +32,15 @@ if (!empty($user['profile_pic']) && file_exists(__DIR__ . '/' . $user['profile_p
     $pic = 'assets/contributor/icon.jpg';
 }
 
-// 5. Fetch resources (newest first)
+// 5. Function to get user email
+function getUserEmail($pdo, $userId) {
+    $stmt = $pdo->prepare("SELECT email FROM userdata WHERE id = ?");
+    $stmt->execute([$userId]);
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $result ? $result['email'] : null;
+}
+
+// 6. Fetch resources (newest first)
 $resStmt = $pdo->prepare("
     SELECT * FROM resources 
     WHERE user_id = ? AND status = 'approved'
@@ -41,12 +49,15 @@ $resStmt = $pdo->prepare("
 $resStmt->execute([$profileId]);
 $resources = $resStmt->fetchAll(PDO::FETCH_ASSOC);
 
-// 6. Prepare category pills
+// 7. Prepare category pills
 $currentCats = [];
 if (!empty($user['talent_category'])) {
     $currentCats = explode(',', $user['talent_category']);
 }
 $colors = ['#667eea','#764ba2','#6b8e23','#ff6b6b','#48dbfb','#feca57','#ffa502','#1e90ff'];
+
+// Get user email
+$userEmail = getUserEmail($pdo, $profileId);
 ?>
 <link rel="stylesheet" href="styles/userprofile.css">
 
@@ -61,6 +72,17 @@ $colors = ['#667eea','#764ba2','#6b8e23','#ff6b6b','#48dbfb','#feca57','#ffa502'
       <h2><?= htmlspecialchars($user['username']) ?></h2>
       <?php if (!empty($user['bio'])): ?>
         <p class="bio"><?= nl2br(htmlspecialchars($user['bio'])) ?></p>
+      <?php endif; ?>
+
+      <!-- Email display section -->
+      <?php if (!empty($userEmail)): ?>
+        <div class="contact-info">
+          <p class="find-me-here">Find me here: 
+            <a href="mailto:<?= htmlspecialchars($userEmail) ?>" class="email-link">
+              <?= htmlspecialchars($userEmail) ?>
+            </a>
+          </p>
+        </div>
       <?php endif; ?>
 
       <div class="category-pills">
