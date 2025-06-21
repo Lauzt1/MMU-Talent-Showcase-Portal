@@ -85,6 +85,7 @@
       $stmt = $pdo->prepare("
         SELECT r.*
         FROM resources r
+        WHERE r.status = 'approved'
         ORDER BY r.uploaded_at DESC
         LIMIT 4
       ");
