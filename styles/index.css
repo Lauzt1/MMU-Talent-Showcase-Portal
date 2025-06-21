@@ -66,6 +66,57 @@
   background: rgba(255, 255, 255, 0.3);
   transform: scale(1.05);
 }
+/* ——————————————————————————————
+   Autocomplete dropdown in hero
+———————————————————————————————— */
+.category-form {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+  position: relative;
+}
+
+.category-form input[list] {
+  padding: 15px 20px;
+  border: none;
+  border-radius: 50px;
+  font-size: 1rem;
+  outline: none;
+  background: #fff;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  min-width: 200px;
+}
+
+.category-form button {
+  padding: 15px 25px;
+  background: rgba(255,255,255,0.2);
+  border: none;
+  border-radius: 50px;
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+.category-form button:hover {
+  background: rgba(255,255,255,0.3);
+  transform: scale(1.05);
+}
+
+/* Remove default arrow on some browsers, if desired */
+.category-form input[list]::-webkit-calendar-picker-indicator,
+.category-form input[list]::-webkit-clear-button {
+  display: none;
+}
+
+/* Responsive wrap */
+@media (max-width: 600px) {
+  .category-form {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
 
 /* 4. Section Headings */
 section h2 {

@@ -1,16 +1,47 @@
 <?php include 'header.php'; ?>
 <link rel="stylesheet" href="styles/index.css">
+<?php
+  // List of valid categories—keep this in sync with catalogue.php
+  $validCats = [
+    'All',
+    'Art & Design',
+    'Music & Audio',
+    'Video & Film',
+    'Writing & Documents',
+    'others'
+  ];
+?>
 
 <main class="container">
   <div class="content">
     <!-- Hero/Search -->
     <section id="search-hero">
       <h1>Welcome to MMU Talent Showcase Portal</h1>
-      <form action="catalogue.php" method="get">
-        <input type="text" name="q" placeholder="Search talents..." required>
-        <button type="submit">🔍</button>
-      </form>
-    </section>
+      <form action="catalogue.php" method="get" class="category-form">
+    <!--
+      Autocomplete input: type to filter the list below
+      name="category" → sent to catalogue.php
+    -->
+    <input
+      type="text"
+      name="category"
+      list="categories"
+      placeholder="Talent Category…"
+      required
+      autocomplete="off"
+    >
+    <datalist id="categories">
+      <?php foreach($validCats as $cat): ?>
+        <option value="<?= htmlspecialchars($cat) ?>">
+      <?php endforeach; ?>
+    </datalist>
+
+    <!-- Always send “recent” -->
+    <input type="hidden" name="sort" value="recent">
+
+    <button type="submit">Go 🔍</button>
+  </form>
+</section>
 
     <!-- Featured Talents -->
     <section id="featured-talents">
