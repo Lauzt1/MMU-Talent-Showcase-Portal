@@ -8,10 +8,10 @@ include 'header.php';
 
 // Predefined contributors (all images moved into assets/contributor)
 $contributors = [
-    ['img' => '../assets/contributor/enxin.png', 'name' => 'Hoo Enn Xin', 'id' => '1231302621'],
-    ['img' => '../assets/contributor/zithao.png', 'name' => 'Lau Zi Thao', 'id' => '1211102370'],
-    ['img' => '../assets/contributor/weijoe.png', 'name' => 'Teng Wei Joe', 'id' => '1211102797'],
-    ['img' => '../assets/contributor/xinyuen.png', 'name' => 'Lim Xin Yuen', 'id' => '1211108007'],
+    ['img' => '../assets/contributor/hooenxin.png', 'name' => 'Hoo Enn Xin', 'id' => '1231302621'],
+    ['img' => '../assets/contributor/lauzithao.png', 'name' => 'Lau Zi Thao', 'id' => '1211102370'],
+    ['img' => '../assets/contributor/tengweijoe.png', 'name' => 'Teng Wei Joe', 'id' => '1211102797'],
+    ['img' => '../assets/contributor/limxinyuen.png', 'name' => 'Lim Xin Yuen', 'id' => '1211108007'],
 ];
 ?>
 <link rel="stylesheet" href="../styles/contributor.css">
